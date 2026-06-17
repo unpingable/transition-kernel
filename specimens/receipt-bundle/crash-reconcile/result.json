@@ -1,0 +1,6 @@
+{
+  "at": "after_effect",
+  "consumption_event_id": "op-crash:op-crash",
+  "operational": true,
+  "result": "crashed"
+}

@@ -1,0 +1,2 @@
+{"consumption_event_id": "op-crash:op-crash", "kind": "consume_receipt", "la_decision": {"consumed_amount": 1, "decision": "Consumed", "receipt": "ReceiptId(4)", "remaining_capacity": 4, "token_id": "t0"}, "operational": true, "token_id": "t0"}
+{"consumption_event_id": "op-crash:op-crash", "content_sha256": "a4945c2afa3cd520360aac7e876a93e1988f4e084d227ede291b1ec23c9d17cf", "effect_class": "create_marker_v1", "kind": "effect_attempt", "marker_path": "/home/jbeck/git/transition-kernel/specimens/receipt-bundle/crash-reconcile/sandbox/op-crash.marker"}

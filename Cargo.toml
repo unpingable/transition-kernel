@@ -1,0 +1,24 @@
+[package]
+name = "transition_kernel"
+version = "0.0.0"
+edition = "2021"
+description = "The governed-transition office: cooked context -> Admit(candidate) | Refuse | Escalate. Sole minter of 'admitted'; does not establish standing, spend capacity, execute effects, ratify policy, or own the governance root."
+license = "Apache-2.0"
+
+[[bin]]
+name = "transition-cli"
+path = "src/bin/transition-cli.rs"
+
+# Quarantined Lean specimen: built + run (must not rot), but it is NOT the A1 conformance gate.
+[[test]]
+name = "specimen_temporal_custody"
+path = "specimens/temporal_custody/specimen.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_jcs = "0.1"
+sha2 = "0.10"
+
+[dev-dependencies]
+serde_json = "1"

@@ -1,0 +1,20 @@
+{
+  "schema": "transition_kernel.frontier.gap3.v1",
+  "case": "legit-promotion",
+  "description": "Clean custody: an inherited summary explicitly promoted to may_rely for its intended consumer, fresh, in scope. The ONE path to standing-eligible memory.",
+  "memory_claim": {
+    "artifact": {
+      "origin": "session-A", "recorder": "ag:outer", "subject": "disk_pressure",
+      "scope": "ops/cleanup", "intended_consumer": "ag:main", "recorded_at": 100,
+      "epistemic_class": "inherited", "granted_level": "may_remember",
+      "valid_until": 1000, "content_digest": "sha256:summary-abc"
+    },
+    "promotion_receipt": {
+      "artifact_digest": "sha256:summary-abc", "subject": "disk_pressure",
+      "to_level": "may_rely", "authorized_consumer": "ag:main",
+      "issued_by": "operator-root", "valid_until": 1000
+    },
+    "presentation": { "consumer": "ag:main", "now": 200, "scope": "ops/cleanup" }
+  },
+  "expected": { "verdict": "standing_eligible", "standing_output": "verified" }
+}

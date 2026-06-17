@@ -1,0 +1,5 @@
+{
+  "operational": false,
+  "reason": "correspondence_refused:binding:EligibilityMismatch",
+  "result": "not_consumed_refused"
+}

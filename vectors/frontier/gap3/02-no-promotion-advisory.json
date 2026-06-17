@@ -1,0 +1,15 @@
+{
+  "schema": "transition_kernel.frontier.gap3.v1",
+  "case": "no-promotion-advisory",
+  "description": "A remembered summary presented with NO promotion receipt. It cannot be relied upon as standing evidence; it is advisory-only. 'remembered -> relied_upon' is unconstructable without promotion.",
+  "memory_claim": {
+    "artifact": {
+      "origin": "session-A", "recorder": "ag:outer", "subject": "disk_pressure",
+      "scope": "ops/cleanup", "intended_consumer": "ag:main", "recorded_at": 100,
+      "epistemic_class": "inherited", "granted_level": "may_remember",
+      "valid_until": 1000, "content_digest": "sha256:summary-abc"
+    },
+    "presentation": { "consumer": "ag:main", "now": 200, "scope": "ops/cleanup" }
+  },
+  "expected": { "verdict": "advisory_only", "standing_output": "required" }
+}

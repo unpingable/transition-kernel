@@ -1,0 +1,20 @@
+{
+  "schema": "transition_kernel.frontier.gap3.v1",
+  "case": "consumer-mismatch",
+  "description": "Cross-consumer adoption: recorded for ag:main, presented by ag:other with an otherwise-valid rely promotion. A's adoption is not B's standing (MultiConsumerAdoption).",
+  "memory_claim": {
+    "artifact": {
+      "origin": "session-A", "recorder": "ag:outer", "subject": "disk_pressure",
+      "scope": "ops/cleanup", "intended_consumer": "ag:main", "recorded_at": 100,
+      "epistemic_class": "inherited", "granted_level": "may_remember",
+      "valid_until": 1000, "content_digest": "sha256:summary-abc"
+    },
+    "promotion_receipt": {
+      "artifact_digest": "sha256:summary-abc", "subject": "disk_pressure",
+      "to_level": "may_rely", "authorized_consumer": "ag:main",
+      "issued_by": "operator-root", "valid_until": 1000
+    },
+    "presentation": { "consumer": "ag:other", "now": 200, "scope": "ops/cleanup" }
+  },
+  "expected": { "verdict": "refused", "reason": "consumer_mismatch" }
+}

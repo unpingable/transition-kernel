@@ -1,0 +1,12 @@
+{
+  "consume_receipt": {
+    "consumed_amount": 1,
+    "decision": "Consumed",
+    "receipt": "ReceiptId(4)",
+    "remaining_capacity": 4,
+    "token_id": "t0"
+  },
+  "consumption_event_id": "op-success:op-success",
+  "operational": true,
+  "result": "consumed_effect_succeeded"
+}

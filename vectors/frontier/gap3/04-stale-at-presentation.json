@@ -1,0 +1,20 @@
+{
+  "schema": "transition_kernel.frontier.gap3.v1",
+  "case": "stale-at-presentation",
+  "description": "Cross-session inheritance presented past the freshness horizon: valid_until=1000, presented at now=1001. Fresh when recorded, void when relied upon (TemporalCustody at the rely boundary).",
+  "memory_claim": {
+    "artifact": {
+      "origin": "session-A", "recorder": "ag:outer", "subject": "disk_pressure",
+      "scope": "ops/cleanup", "intended_consumer": "ag:main", "recorded_at": 100,
+      "epistemic_class": "inherited", "granted_level": "may_remember",
+      "valid_until": 1000, "content_digest": "sha256:summary-abc"
+    },
+    "promotion_receipt": {
+      "artifact_digest": "sha256:summary-abc", "subject": "disk_pressure",
+      "to_level": "may_rely", "authorized_consumer": "ag:main",
+      "issued_by": "operator-root", "valid_until": 2000
+    },
+    "presentation": { "consumer": "ag:main", "now": 1001, "scope": "ops/cleanup" }
+  },
+  "expected": { "verdict": "refused", "reason": "stale_or_superseded" }
+}
