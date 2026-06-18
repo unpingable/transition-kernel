@@ -45,6 +45,29 @@ gets a classified receipt **and a failed run** (never an articulate green test) 
 does not establish standing, mint/spend capacity (that is LinearAccountant), ratify policy, or own the
 governance root. See `NON_CLAIMS.md`.
 
+### Trust perimeter (read this before reading "unconstructable" as more than it is)
+
+`AuthorizedTransition` makes **internal lineage and recombination constraints unforgeable by
+construction** — all fields module-private, the sole producer is `finalize`, and there is no public
+constructor or struct-literal path even from the test crate. But "unconstructable" is *leaf-relative*.
+**Authenticity of leaf artifacts — Standing assessments, `LaCapability`, revalidation facts (`live` /
+freshness), and actuator idempotency — remains the responsibility of their issuing offices and the
+trusted composition boundary** (LinearAccountant as the sole real capability minter; the supervisor that
+assembles the bundle from real office outputs). `LaCapability` is a deliberately open `pub` + `Deserialize`
+wire mirror ("we receive it; we never mint one"); the anti-recombination check (`capability
+.eligibility_reference == candidate.standing_ref`) blocks *recombination*, not *fabrication* by whoever
+already sits inside the trusted boundary. The `pub` / `pub(crate)` / private gradient **is** the
+separation-of-offices map: a field's visibility tells you which office is responsible for vouching for it.
+
+This is the same shape on three surfaces — Lean proves relative to a per-bridge `BridgeValid` it can't
+discharge; composition proves relative to authentic Standing/LA leaves; effect replay-safety holds
+relative to a per-actuator idempotency the kernel can't enforce. Each office mechanically enforces its own
+clause and makes every external assumption visible at a typed boundary. That is more honest than
+pretending the type graph proves facts about the world. Future hardening (named, not built): a sealed
+`VerifiedLaCapability` (issuer-verified) distinct from the open `LaCapability` wire form — warranted only
+if the bundle ever crosses an attacker-controlled transport or the model can influence raw serialized
+fields.
+
 ## Status (summit: `stage3b2-first-effect`)
 
 Each authority was turned on at a reviewed boundary, the legacy route progressively fenced and now

@@ -23,3 +23,13 @@ What `transition_kernel` is **not**, stated so the office is never read as more 
   `TransitionDecision::Admit(AdmissionCandidate)`; an `AuthorizedTransition` (the only object that can
   cross into execution) is *unconstructable* until LA capability is bound and execution-time
   revalidation passes. `operational: false` is a structural property, not a flag.
+- **"Unconstructable" is leaf-relative — internal lineage is unforgeable by construction; leaf
+  authenticity is vouched for upstream.** The type graph guarantees that a candidate-for-X cannot be
+  paired with a capability-minted-for-Y (anti-recombination) and that an `AuthorizedTransition` cannot be
+  built without both proofs, a bound capability, and a passed revalidation. It does **not** guarantee the
+  *truth* of the leaves: `LaCapability` is an open `pub`/`Deserialize` wire mirror (LinearAccountant is
+  the sole real minter); `ExecutionRevalidation::revalidate` proves the check *ran and passed with these
+  inputs*, never that `live`/freshness are cosmically accurate; actuator idempotency is the actuator's
+  contract, not the kernel's. The trust perimeter is LA + the bundle-assembling supervisor, by design.
+  This is the same cap on generalization as the Lean side's per-bridge `BridgeValid`: the load-bearing
+  obligation lives outside the verified object, and we say so rather than hide it.
