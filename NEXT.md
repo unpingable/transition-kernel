@@ -1,7 +1,8 @@
 # NEXT
 
 ```
-next_action: GAP-2 complete (C1→C2→C3) — await operator for next frontier
+next_action: nothing queued — await operator
+candidate_next: Branch A (Lean theorem feedstock) or Branch B (issue-path custody gradient)
 ```
 
 The summit `stage3b2-first-effect` is sealed; its follow-on **Stage 3c — composed receipt snapshot
@@ -34,19 +35,29 @@ refuses, and a crash after the burn replays as `continuation_spent_outcome_unkno
 hostile/durability tests (`agent_gov/tests/test_continuation_enforce_c3.py`); full transition+continuation
 suite green (55). Coordinated state: agent_gov `main` @ `80f7f47`. Nothing pushed.
 
-> **Claim earned (GAP-2):** a supervised agent can take a further governed step only by presenting a
-> single-use, receipt-bound continuation grant. The loop no longer renews itself by narrative momentum —
-> the agent must show a receipt to keep being an agent. This is real AG-on-AG; not yet full
-> self-governance.
+**GAP-2 C4 — the two-step AG-on-AG trajectory specimen — is built and verified.** The C3 mechanism walked
+as a trajectory, not more mechanism: `specimens/continuation-trajectory/` runs step-1 effect → grant
+issued → durable burn → step-2 effect (gated by the burn) over the real binaries + `agent_gov`, with three
+bundles (`two-step-success`, `no-grant-refused`, `burned-but-effect-refused`). Running `generate.py`
+asserts every invariant, so it is a walk, not prose.
 
-**Await operator for the next frontier.** Named, not yet built:
-- The two-layer **issue-path** custody gradient — `ContinuationGrantWire → VerifiedContinuationGrant →
-  AuthorizedContinuation` (mirroring `LaCapability → (VerifiedLaCapability) → AuthorizedTransition`) —
-  matters once an *external* issuer is in the loop, or the leaf-authenticity seam reopens wearing a new
-  hat (see `NON_CLAIMS.md` / README "Trust perimeter"). C1–C3 make the grant unforgeable and
-  reuse/transfer/scope-expansion/expiry refused, but the issuer is still trusted.
-- The composed continuation chain has no Lean obligation yet — same proof→world order Stage 3c followed:
-  the deployed enforce gate is now a forcing consumer that a future theorem could justify.
+> **Claim earned (GAP-2):** a supervised agent executed a bounded governed step, earned exactly one
+> further governed step through a single-use, receipt-bound continuation grant, and the full two-step
+> trajectory is replay-legible. The loop no longer renews itself by narrative momentum — the agent must
+> show a receipt to keep being an agent. Real AG-on-AG; not yet full self-governance.
+
+**Await operator. Two candidate branches (choose one):**
+
+- **Branch A — Lean theorem feedstock.** The operational gate now exists, so it is a *forcing consumer*
+  for a theorem family: terminal receipt chain · continuation authority · no continuation without grant ·
+  single-use / no-replay / no-contraction · prior success does not authorize the next step. Lean follows
+  the gate (proof→world fence), not the inspirational poster. See `LEAN_OBLIGATIONS.md`.
+- **Branch B — issue-path custody gradient.** `WireContinuationGrant → VerifiedContinuationGrant →
+  AuthorizedContinuation` (mirroring `LaCapability → (VerifiedLaCapability) → AuthorizedTransition`).
+  **Open only when an artifact crosses from external wire into trusted continuation/effect authority** —
+  an out-of-office issuer, or a model/tool that can influence raw serialized grant fields. Today the
+  issuer is the same trusted sealed office; building this first would polish the perimeter before there is
+  an attacker-shaped path crossing it.
 
 Frozen claim (effect layer): *at-most-once authority consumption and replay-legible execution of one
 idempotent bounded effect through the live AG supervisor.*
