@@ -1,0 +1,23 @@
+{
+  "continuation_refusal": {
+    "decision": "refuse",
+    "kind": "scope_expansion",
+    "reasons": [
+      "next-step scope is not the prior governed scope (C1: no widening)"
+    ]
+  },
+  "step1": {
+    "consume_receipt": {
+      "consumed_amount": 1,
+      "decision": "Consumed",
+      "receipt": "ReceiptId(4)",
+      "remaining_capacity": 8,
+      "token_id": "t0"
+    },
+    "consumption_event_id": "op-step1:op-step1",
+    "operational": true,
+    "result": "consumed_effect_succeeded"
+  },
+  "step2": "never_reached_transition_gate",
+  "trajectory": "no_grant_refused"
+}

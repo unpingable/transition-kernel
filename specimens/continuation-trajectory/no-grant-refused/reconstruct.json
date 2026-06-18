@@ -1,0 +1,6 @@
+{
+  "continuation": {},
+  "effects": {
+    "op-step1:op-step1": "consumed_effect_succeeded"
+  }
+}

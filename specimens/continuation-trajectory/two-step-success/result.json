@@ -1,0 +1,29 @@
+{
+  "claim": "one bounded step + exactly one earned next step, replay-legible",
+  "grant_id": "cont:35e0cf6b005782cc57d09016a9fabcb3fe3c3aa3f07f08b7b6d10c6bb015748a",
+  "step1": {
+    "consume_receipt": {
+      "consumed_amount": 1,
+      "decision": "Consumed",
+      "receipt": "ReceiptId(4)",
+      "remaining_capacity": 8,
+      "token_id": "t0"
+    },
+    "consumption_event_id": "op-step1:op-step1",
+    "operational": true,
+    "result": "consumed_effect_succeeded"
+  },
+  "step2": {
+    "consume_receipt": {
+      "consumed_amount": 1,
+      "decision": "Consumed",
+      "receipt": "ReceiptId(6)",
+      "remaining_capacity": 7,
+      "token_id": "t0"
+    },
+    "consumption_event_id": "op-step2:op-step2",
+    "operational": true,
+    "result": "consumed_effect_succeeded"
+  },
+  "trajectory": "two_step_success"
+}
