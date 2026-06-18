@@ -22,6 +22,10 @@ decision contract.
    a theorem holds. Keep `docs/LEAN_OBLIGATIONS.md` honest (component vs full-operational).
 6. **Verification by exit code.** Judge `cargo test` / `pytest` by the bare exit code, never by eyeballing
    piped output.
+7. **Push is authority, not timing.** `File ≠ commit ≠ push.` Only an explicit operator instruction that
+   *names* pushing authorizes a push; an open time window never does. This is the same provenance
+   discipline the kernel enforces — "filed" is not "relied upon," and "after hours" is not consent.
+   Commit freely on local branches when asked; publish only on the word "push."
 
 ## Verify
 
