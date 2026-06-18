@@ -37,9 +37,15 @@ boundary (Stage 3). See `specimens/temporal_custody/`.
 *attempts* the forbidden bridge (forging a candidate from one proof, or coercing read→write standing). Until
 `specimens/no_free_bridge/` exists, NoFreeStandingBridge stays `PARTIAL`, not `CORRESPONDS`.
 
-## Completeness obligation: the composed receipt does not pin the admission snapshot (Stage 3b)
+## Completeness obligation: the composed receipt does not pin the admission snapshot (Stage 3b) — RESOLVED (Stage 3c)
 
-**Named, not built. No code change filed with this entry.**
+**RESOLVED 2026-06-18.** Built as Stage 3c: `composed_snapshot::ComposedExecutionSnapshot` pins the
+verified `eligibility_reference`, the execution-clock revalidation facts (`revalidated_at` /
+`revalidation_valid_until` / `revalidation_live`), the candidate basis, and the capability nonce into one
+canonical `snapshot_hash`; the orchestrator records it durably before the burn and the `consume_receipt`
+references it; `reconstruct_composed` refuses any incoherent chain. The completeness obligation moves from
+this log to an operational correspondence — see `CORRESPONDENCE.md` → *Stage 3c — composed receipt
+snapshot coherence*. The original framing is retained below for provenance.
 
 **Provenance.** Cross-constellation execution-time re-admission audit, 2026-06-18 (nightshift / standing /
 linearaccountant / agent_gov / Lean). The audit's seam-2 question — "is the receipt a projection of the

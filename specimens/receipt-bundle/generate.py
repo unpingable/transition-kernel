@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -21,7 +22,7 @@ sys.path.insert(0, str(Path.home() / "git" / "agent_gov" / "src"))
 
 from governor.runtime.la_subprocess import DEFAULT_LA_CLI, LASubprocess  # noqa: E402
 from governor.runtime.transition_enforce import (  # noqa: E402
-    CRASH_AFTER_EFFECT, MarkerActuator, enforce_chain, reconstruct,
+    CRASH_AFTER_EFFECT, MarkerActuator, enforce_chain, reconstruct, reconstruct_composed,
 )
 from governor.runtime.transition_subprocess import DEFAULT_TRANSITION_CLI, TransitionSubprocess  # noqa: E402
 
@@ -53,6 +54,8 @@ def _run(name, *, op, eligibility=ELIG, crash_at=None, sandbox=None):
     durable = d / "durable.jsonl"
     if durable.exists():
         durable.unlink()
+    # Reproducible from clean: the create_new effect must not collide with a marker left by a prior run.
+    shutil.rmtree(d / "sandbox", ignore_errors=True)
     la, token = _la()
     tk = _tk()
     try:
@@ -63,6 +66,8 @@ def _run(name, *, op, eligibility=ELIG, crash_at=None, sandbox=None):
             valid_until=1000, now=10, durable_path=durable, actuator=act, crash_at=crash_at)
         (d / "result.json").write_text(json.dumps(res, indent=2, sort_keys=True) + "\n")
         (d / "reconstruct.json").write_text(json.dumps(reconstruct(durable), indent=2) + "\n")
+        (d / "reconstruct_composed.json").write_text(
+            json.dumps(reconstruct_composed(durable), indent=2, sort_keys=True) + "\n")
         return res, la, tk
     finally:
         la.close()
@@ -83,6 +88,7 @@ def main():
     durable = d / "durable.jsonl"
     if durable.exists():
         durable.unlink()
+    shutil.rmtree(d / "sandbox", ignore_errors=True)
     try:
         common = dict(token_handle=token, scope=SCOPE, target="write", effect_class="create_marker_v1",
                       operation_hash="op-replay", consumer="ag:main", eligibility_reference=ELIG,
@@ -91,6 +97,8 @@ def main():
         second = enforce_chain(tk, la, actuator=MarkerActuator(d / "sandbox", "op-replay", CONTENT), **common)
         (d / "result.json").write_text(json.dumps({"first": first, "second_replay": second}, indent=2, sort_keys=True) + "\n")
         (d / "reconstruct.json").write_text(json.dumps(reconstruct(durable), indent=2) + "\n")
+        (d / "reconstruct_composed.json").write_text(
+            json.dumps(reconstruct_composed(durable), indent=2, sort_keys=True) + "\n")
     finally:
         la.close()
     print("receipt bundle generated under", HERE)

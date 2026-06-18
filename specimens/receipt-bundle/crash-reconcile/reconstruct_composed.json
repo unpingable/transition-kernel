@@ -1,0 +1,24 @@
+{
+  "op-crash:op-crash": {
+    "coherent": true,
+    "incoherence": null,
+    "outcome": "consumed_effect_succeeded",
+    "snapshot": {
+      "admission_candidate_hash": "sha256:7c3fd57a1dc9d3d4ef8c1dada10a62f9d70c31e6f65247ffedde7a2aea4f5f83",
+      "capability_nonce": "op-crash",
+      "consumer": "ag:main",
+      "consumption_event_id": "op-crash:op-crash",
+      "effect_class": "create_marker_v1",
+      "eligibility_reference": "sha256:standing-xyz",
+      "kernel_version": "0.0.0",
+      "operation_hash": "op-crash",
+      "revalidated_at": 10,
+      "revalidation_live": true,
+      "revalidation_valid_until": 1000,
+      "schema": "transition_kernel.composed_snapshot.v1",
+      "scope": "lab",
+      "target": "write"
+    },
+    "snapshot_hash": "sha256:5b1496f7d1920bc5f05acba8797ae317d454b9571ed8dfdd0fc8ce07af040c1c"
+  }
+}

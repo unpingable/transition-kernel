@@ -1,12 +1,15 @@
 # NEXT
 
 ```
-next_action: nothing queued — await operator
+next_action: GAP-2 continuation — next frontier, await operator
 ```
 
-The summit `stage3b2-first-effect` is sealed (see `SUMMIT.md`). No work is queued.
+The summit `stage3b2-first-effect` is sealed, and its follow-on **Stage 3c — composed receipt snapshot
+coherence** is now built and verified (see `SUMMIT.md` / `CORRESPONDENCE.md` → Stage 3c): the composed
+durable receipt pins the exact admission snapshot that governed the effect. The one owned completeness gap
+in front of continuation is closed.
 
-When the next frontier is reopened, the one that advances the thesis is **GAP-2 — continuation**: the
+The frontier that advances the thesis is **GAP-2 — continuation**: the
 kernel deciding whether a governed agent earns *another* governed step (not merely one action). A registry
 of safely-constitutional file operations is ordinary engineering and does not advance the thesis.
 

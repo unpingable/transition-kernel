@@ -1,0 +1,24 @@
+{
+  "op-replay:op-replay": {
+    "coherent": true,
+    "incoherence": null,
+    "outcome": "consumed_effect_succeeded",
+    "snapshot": {
+      "admission_candidate_hash": "sha256:7c3fd57a1dc9d3d4ef8c1dada10a62f9d70c31e6f65247ffedde7a2aea4f5f83",
+      "capability_nonce": "op-replay",
+      "consumer": "ag:main",
+      "consumption_event_id": "op-replay:op-replay",
+      "effect_class": "create_marker_v1",
+      "eligibility_reference": "sha256:standing-xyz",
+      "kernel_version": "0.0.0",
+      "operation_hash": "op-replay",
+      "revalidated_at": 10,
+      "revalidation_live": true,
+      "revalidation_valid_until": 1000,
+      "schema": "transition_kernel.composed_snapshot.v1",
+      "scope": "lab",
+      "target": "write"
+    },
+    "snapshot_hash": "sha256:c9b1c92fe630676c43db9eb2b3dba68de9f3c7318174e981348d11185c08f5e5"
+  }
+}

@@ -23,6 +23,55 @@ yields `already_consumed` at `la_seam`, `effect_count` stays 1, `consumed` flips
 artifact (the spend) is not laundered into a second occurrence. Not yet `CORRESPONDS`: the move-only /
 single-use *capability type* is Stage 3; A1 only reproduces the refusal at the projection level.
 
+## Stage 3c — composed receipt snapshot coherence
+
+The Stage 3 chain is the **first consumer that composes multiple offices' re-admissions into one effect**
+(`ExecutionRevalidation` over standing → receiver correspondence → LA consume → effect). Each office
+re-checked and receipted its own decision coherently, but the *composed* durable receipt recorded only the
+LA decision and effect outcome — the `ExecutionRevalidation` facts that governed admission were checked
+and then discarded. A verifier could confirm "capacity was consumed and an effect happened" but not "the
+effect happened under exactly *this* composed admission snapshot." (Named first in
+`NON_CORRESPONDENCE.md`; this is the realization.)
+
+Closed by porting `standing`'s gold-standard pattern (a receipt built from the exact evaluated snapshot,
+written atomically) to the composed seam:
+
+- **The pinned object** (`composed_snapshot::ComposedExecutionSnapshot`): captures the verified opaque
+  `eligibility_reference`, the execution-clock revalidation facts (`revalidated_at` /
+  `revalidation_valid_until` / `revalidation_live`), the admission-candidate basis hash (relied-upon
+  references, never recomputed from content), the capability nonce, and the bound operation — reduced to
+  one canonical `snapshot_hash` (RFC 8785 JCS + SHA-256). `ExecutionRevalidation` now pins `valid_until`
+  alongside `revalidated_at`: the load-bearing carry the Lean `lossy_receipt_cannot_pin_snapshot` scratch
+  model identifies (two execution snapshots over one lineage must be distinguishable in the receipt, which
+  needs the clock + horizon, not just the eligibility reference).
+- **Emitted at the seam** (`chain::check_correspondence`): the snapshot + `snapshot_hash` ride in the
+  `correspondence_ok` result.
+- **Bound durably** (`agent_gov` `transition_enforce.py`): the orchestrator pins a `composed_snapshot`
+  record **before** the burn (so a crash after consume still reconstructs with the governing snapshot
+  attached) and the `consume_receipt` references `snapshot_hash`. Fail-closed: a kernel that cannot pin
+  the snapshot, or emits an incoherent one, is refused before any consume.
+- **Verified on replay** (`verify_consume_binding` / `verify_snapshot_coherence` /
+  `reconstruct_composed`): recompute the hash and refuse any chain that is missing the snapshot, tampered,
+  lossy (claims liveness with no clock), or referenced by a different hash. The Python recompute
+  reproduces the Rust JCS+SHA-256 hash byte-for-byte (cross-language agreement pinned by a regression
+  test).
+
+> **Invariant earned: a verifier can reconstruct not just "capacity was consumed and an effect happened,"
+> but the exact composed admission snapshot under which that effect was allowed** — and rejects any
+> composed receipt that would describe a different admission state than the one that governed the effect.
+
+11 hostile Rust tests (`tests/stage3c_composed_snapshot.rs`) + 9 Python tests
+(`agent_gov/tests/test_transition_enforce_3c.py`), including the operational dual of
+`lossy_receipt_cannot_pin_snapshot` (same lineage + different execution snapshot → different receipt
+hash). Canonical specimen: each `specimens/receipt-bundle/*/reconstruct_composed.json`.
+
+**Fence (proof→world).** No Lean theorem is *stated* here. `Execution.lean` evaluates authority and
+applies the effect on one shared `state` and emits no receipt, so same-snapshot coherence is *unstatable*
+there. The `Scratch/ExecutionRevalidation.lean` model is **upstream evidence** that the carry is
+load-bearing (Lean→kernel-design); this deployed operational gate is the *forcing consumer* a downstream
+theorem would later justify. A green build is not the receipt the kernel emits. See
+`LEAN_OBLIGATIONS.md` → ComposedReceiptSnapshotCoherence.
+
 ## Stage 3b2 — the first real bounded effect (through the live supervisor)
 
 The fake actuator is replaced by one deliberately boring idempotent effect — exclusive `create_new` of a
