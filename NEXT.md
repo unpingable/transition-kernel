@@ -2,7 +2,7 @@
 
 ```
 next_action: nothing queued — await operator
-candidate_next: Branch A (Lean theorem feedstock) or Branch B (issue-path custody gradient)
+candidate_next: Branch B (issue-path custody gradient) — open only when an external issuer crosses the perimeter
 ```
 
 The summit `stage3b2-first-effect` is sealed; its follow-on **Stage 3c — composed receipt snapshot
@@ -46,12 +46,17 @@ asserts every invariant, so it is a walk, not prose.
 > trajectory is replay-legible. The loop no longer renews itself by narrative momentum — the agent must
 > show a receipt to keep being an agent. Real AG-on-AG; not yet full self-governance.
 
-**Await operator. Two candidate branches (choose one):**
+**Branch A — Lean theorem feedstock — done (narrowly).** `lean/LeanProofs/Scratch/NoFreeContinuation.lean`
+(hand-managed lean repo; authored + type-checks clean, axiom-clean to `propext`; left uncommitted there).
+Models exactly the C4 spine, schematic over scope/class/version: (1) prior success does not imply
+continuation authority (`EffectSucceeded ⊬ MayContinue`); (2) authority is chain-tip bound; (3,5)
+single-use / no contraction / a burned grant cannot be replayed; (4) a grant authorizes an *attempt*, not
+a success (burn persists when the downstream effect refuses). Seed: *a successful governed act does not
+authorize the agent's next breath.* Ledger row: `LEAN_OBLIGATIONS.md` → NoFreeContinuation (forcing
+consumer = the deployed C3 enforce gate + C4 trajectory; not ratified — proof→world fence).
 
-- **Branch A — Lean theorem feedstock.** The operational gate now exists, so it is a *forcing consumer*
-  for a theorem family: terminal receipt chain · continuation authority · no continuation without grant ·
-  single-use / no-replay / no-contraction · prior success does not authorize the next step. Lean follows
-  the gate (proof→world fence), not the inspirational poster. See `LEAN_OBLIGATIONS.md`.
+**Await operator. Remaining named branch:**
+
 - **Branch B — issue-path custody gradient.** `WireContinuationGrant → VerifiedContinuationGrant →
   AuthorizedContinuation` (mirroring `LaCapability → (VerifiedLaCapability) → AuthorizedTransition`).
   **Open only when an artifact crosses from external wire into trusted continuation/effect authority** —
