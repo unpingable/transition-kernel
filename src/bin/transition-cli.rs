@@ -69,6 +69,26 @@ fn run() -> Result<(), String> {
         return Ok(());
     }
 
+    // GAP-2 C2: the continuation decision — given a prior governed step's terminal chain and a proposed
+    // next step, may this agent take one more step? Runs the continuation OFFICE only
+    // (`decide_continuation`); it never touches the single-use consumer, so no grant is burned through
+    // this path. Output: grant | refuse | escalate. No enforce.
+    if root.get("continuation").is_some() {
+        let mut v = root;
+        let inner = v.get_mut("continuation").map(|x| x.take()).ok_or("missing continuation")?;
+        let req: transition_kernel::continuation::ContinuationRequest =
+            serde_json::from_value(inner.get("request").cloned().unwrap_or(serde_json::Value::Null))
+                .map_err(|e| format!("invalid continuation request: {e}"))?;
+        let policy: transition_kernel::continuation::ContinuationPolicy =
+            serde_json::from_value(inner.get("policy").cloned().unwrap_or(serde_json::Value::Null))
+                .map_err(|e| format!("invalid continuation policy: {e}"))?;
+        let out = continuation_decision_json(transition_kernel::continuation::decide_continuation(
+            &req, &policy,
+        ));
+        println!("{}", serde_json::to_string(&out).map_err(|e| e.to_string())?);
+        return Ok(());
+    }
+
     // Stage 3b1: validate up to receiver correspondence (NO burn) and emit LA consume params. LA owns
     // the authoritative burn; the kernel never invents the consumption_event_id.
     if root.get("correspondence_check").is_some() {
@@ -107,4 +127,37 @@ fn run() -> Result<(), String> {
     });
     println!("{}", serde_json::to_string(&out).map_err(|e| e.to_string())?);
     Ok(())
+}
+
+/// Project a continuation decision to its wire form. The grant is described (its binds), never consumed —
+/// recording "the office would grant this" is not burning it.
+fn continuation_decision_json(
+    d: transition_kernel::continuation::ContinuationDecision,
+) -> serde_json::Value {
+    use transition_kernel::continuation::ContinuationDecision as D;
+    match d {
+        D::Grant(g) => serde_json::json!({
+            "decision": "grant",
+            "grant": {
+                "grant_id": g.grant_id(),
+                "session_id": g.session_id(),
+                "actor_id": g.actor_id(),
+                "chain_tip": g.chain_tip(),
+                "scope": g.scope(),
+                "next_step_class": g.next_step_class(),
+                "capacity_ref": g.capacity_ref(),
+                "expires_at": g.expires_at(),
+            },
+        }),
+        D::Refuse { kind, reasons } => serde_json::json!({
+            "decision": "refuse",
+            "kind": kind.as_str(),
+            "reasons": reasons,
+        }),
+        D::Escalate(e) => serde_json::json!({
+            "decision": "escalate",
+            "required_authority": e.required_authority,
+            "reasons": e.reasons,
+        }),
+    }
 }
