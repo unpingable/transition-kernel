@@ -19,6 +19,7 @@ pub mod memory_custody;
 pub mod receiver_gate;
 pub mod chain;
 pub mod composed_snapshot;
+pub mod continuation;
 
 pub use transition_core::{
     AdmissionCandidate, Escalation, RefusalKind, RefusingSeam, TransitionDecision,
