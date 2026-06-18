@@ -1,7 +1,7 @@
 # NEXT
 
 ```
-next_action: GAP-2 C3 (continuation enforce: present/burn) — await operator
+next_action: GAP-2 complete (C1→C2→C3) — await operator for next frontier
 ```
 
 The summit `stage3b2-first-effect` is sealed; its follow-on **Stage 3c — composed receipt snapshot
@@ -23,24 +23,30 @@ is a loud divergence — where the old loop self-authorizes continuation), `hold
 `disabled` is byte-identical baseline. **No grant burn, no LA consume, no effect** merely because C2
 observed. 10 acceptance tests (`agent_gov/tests/test_runtime_continuation_probe_c2.py`).
 
-**Next: GAP-2 C3 — continuation enforce.** This is the actual "earns next breath" point: present the grant
-to `ContinuationConsumer`, burn it single-use, and allow the next step only on admit. Mirrors Stage 3
-(`observe/hold` → `enforce`). The clerk's renewal stamp starts being spent — once, and only when the
-renewal actually controls the next step.
+**GAP-2 C3 — continuation enforce — is built and verified.** A grant must be presented and durably
+**burned** before the next step reaches the transition gate; no grant → no next step (the legacy route is
+structurally unreachable from the enforce branch). The burn is durable, not in-memory (the LA lesson):
+`agent_gov` `continuation_enforce.py` owns the ledger — `present_continuation` (correspondence + durable
+reuse check + burn), `finalize_continuation`, `reconstruct_continuation` (`unused` |
+`spent_outcome_unknown` | `admitted_to_transition`). Burn semantics are sharp: a grant authorizes one
+next-step **attempt**, not one successful effect — it stays spent even if the downstream effect gate
+refuses, and a crash after the burn replays as `continuation_spent_outcome_unknown` (not retryable). 12
+hostile/durability tests (`agent_gov/tests/test_continuation_enforce_c3.py`); full transition+continuation
+suite green (55). Coordinated state: agent_gov `main` @ `80f7f47`. Nothing pushed.
 
-A still-open design choice for C2/C3 (named, not yet built): whether to harden the *issue* path against a
-caller-fabricated request with the two-layer custody gradient
+> **Claim earned (GAP-2):** a supervised agent can take a further governed step only by presenting a
+> single-use, receipt-bound continuation grant. The loop no longer renews itself by narrative momentum —
+> the agent must show a receipt to keep being an agent. This is real AG-on-AG; not yet full
+> self-governance.
 
-```
-ContinuationGrantWire        # open representation from the issuing office
-VerifiedContinuationGrant    # sealed result of issuer verification, consumer-bound
-AuthorizedContinuation       # sealed composition with the prior chain tip
-```
+**Await operator for the next frontier.** Named, not yet built:
+- The two-layer **issue-path** custody gradient — `ContinuationGrantWire → VerifiedContinuationGrant →
+  AuthorizedContinuation` (mirroring `LaCapability → (VerifiedLaCapability) → AuthorizedTransition`) —
+  matters once an *external* issuer is in the loop, or the leaf-authenticity seam reopens wearing a new
+  hat (see `NON_CLAIMS.md` / README "Trust perimeter"). C1–C3 make the grant unforgeable and
+  reuse/transfer/scope-expansion/expiry refused, but the issuer is still trusted.
+- The composed continuation chain has no Lean obligation yet — same proof→world order Stage 3c followed:
+  the deployed enforce gate is now a forcing consumer that a future theorem could justify.
 
-mirroring `LaCapability → (VerifiedLaCapability) → AuthorizedTransition`. C1 already makes the *grant*
-unforgeable and reuse/transfer/scope-expansion refused; the gradient matters once an external issuer is in
-the loop (C2/C3), or the leaf-authenticity seam reopens wearing a new hat (see `NON_CLAIMS.md` / README
-"Trust perimeter").
-
-Frozen claim: *at-most-once authority consumption and replay-legible execution of one idempotent bounded
-effect through the live AG supervisor.*
+Frozen claim (effect layer): *at-most-once authority consumption and replay-legible execution of one
+idempotent bounded effect through the live AG supervisor.*
