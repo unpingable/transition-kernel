@@ -6,6 +6,7 @@
 use serde::Deserialize;
 
 use crate::authority::{AuthorizedTransition, ExecutionRevalidation, LaCapability, OperationContext};
+use crate::composed_snapshot::ComposedExecutionSnapshot;
 use crate::live::WireOfficeOutputs;
 use crate::receiver_gate::{FakeActuator, ReceiverGate, RequestedOperation};
 use crate::transition_core::{decide, TransitionDecision};
@@ -155,11 +156,22 @@ pub fn check_correspondence(bundle: ChainBundle) -> Result<serde_json::Value, St
     let consumption_event_id = format!(
         "{}:{}", authorized.operation().operation_hash, cap_nonce
     );
+
+    // Stage 3c: pin the composed admission snapshot that governed this effect. The orchestrator records
+    // it durably *before* the consume and the consume receipt references `snapshot_hash`, so a verifier
+    // can prove the effect happened under exactly this admission state — not merely that something was
+    // admitted, then consumed, then a marker appeared.
+    let snapshot =
+        ComposedExecutionSnapshot::from_authorized(&authorized, consumption_event_id.clone());
+    let snapshot_hash = snapshot.snapshot_hash();
+
     Ok(serde_json::json!({
         "result": "correspondence_ok",
         "consumption_event_id": consumption_event_id,
         "eligibility_reference": eligibility_reference,
         "scope": scope,
         "capability_nonce": cap_nonce,
+        "composed_snapshot": snapshot,
+        "snapshot_hash": snapshot_hash,
     }))
 }

@@ -35,10 +35,20 @@ pub struct OperationContext {
 
 /// Proof that Standing/custody/freshness were re-checked at the **execution** clock (not inherited from
 /// citation). Sealed: constructable only by [`ExecutionRevalidation::revalidate`].
+///
+/// It pins the execution-clock facts it actually checked — `revalidated_at` (the execution clock) and
+/// `valid_until` (the freshness horizon it was checked against) — so the composed receipt can record the
+/// snapshot that governed the effect, not merely that *something* was revalidated. (Liveness is implicit:
+/// a constructed `ExecutionRevalidation` exists only because `live` was true at `revalidated_at`; see
+/// [`Self::revalidate`].) This is the load-bearing carry the Lean `lossy_receipt_cannot_pin_snapshot`
+/// model identifies: two transitions over the same lineage but different execution snapshots must be
+/// distinguishable in the receipt, which requires `revalidated_at` + `valid_until`, not just the
+/// eligibility reference.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExecutionRevalidation {
     standing_ref: String,
     revalidated_at: u64,
+    valid_until: u64,
     _seal: (),
 }
 
@@ -63,11 +73,21 @@ impl ExecutionRevalidation {
         if now > valid_until {
             return Err(RevalError::StaleAtExecution);
         }
-        Ok(Self { standing_ref: standing_ref.to_string(), revalidated_at: now, _seal: () })
+        Ok(Self { standing_ref: standing_ref.to_string(), revalidated_at: now, valid_until, _seal: () })
     }
 
     pub fn standing_ref(&self) -> &str {
         &self.standing_ref
+    }
+
+    /// The execution clock at which the re-admission was checked.
+    pub fn revalidated_at(&self) -> u64 {
+        self.revalidated_at
+    }
+
+    /// The freshness horizon the re-admission was checked against (`revalidated_at <= valid_until`).
+    pub fn valid_until(&self) -> u64 {
+        self.valid_until
     }
 }
 
