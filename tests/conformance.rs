@@ -90,7 +90,7 @@ fn legacy_corpus_byte_for_byte() {
         }
     }
 
-    assert_eq!(cases, 9, "expected all 9 frozen corpus cases");
+    assert_eq!(cases, 13, "expected all 13 frozen corpus cases");
     assert_eq!(
         unaccepted_divergences, 0,
         "{unaccepted_divergences} unaccepted divergence(s) — see receipts above"

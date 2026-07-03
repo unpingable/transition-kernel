@@ -196,6 +196,13 @@ pub enum AdmissionOutput {
 pub enum ConsumeOutput {
     Consumed,
     AlreadyConsumed,
+    // B5 (2026-07-03): the LA-token quartet. Each is a distinct ConsumptionDecision
+    // the LA seam refuses with its own token-state refusal kind (mirrors
+    // agent_gov linear_accountant_client._LA_TO_REFUSAL).
+    Revoked,
+    Expired,
+    UnknownToken,
+    ScopeMismatch,
     NotReached,
 }
 
@@ -250,6 +257,27 @@ pub fn decide(office: &OfficeOutputs) -> TransitionDecision {
         return refuse(RefusalKind::AlreadyConsumed, RefusingSeam::LaSeam,
             "consumption_event_id already consumed (replay)");
     }
+    // B5: the LA-token quartet — each token-state failure refuses at the la_seam
+    // with its own kind, before any effect is spent.
+    match office.la_consume {
+        ConsumeOutput::Revoked => {
+            return refuse(RefusalKind::TokenRevoked, RefusingSeam::LaSeam,
+                "LA returned Revoked: token revoked between grant and spend");
+        }
+        ConsumeOutput::Expired => {
+            return refuse(RefusalKind::TokenExpired, RefusingSeam::LaSeam,
+                "LA returned Expired: token TTL elapsed before consume");
+        }
+        ConsumeOutput::UnknownToken => {
+            return refuse(RefusalKind::UnknownToken, RefusingSeam::LaSeam,
+                "LA returned UnknownToken: token not recognized");
+        }
+        ConsumeOutput::ScopeMismatch => {
+            return refuse(RefusalKind::ScopeMismatch, RefusingSeam::LaSeam,
+                "LA returned ScopeMismatch: consume outside the granted scope");
+        }
+        _ => {}
+    }
 
     // 5. Admit — yields a *candidate*, never an authority. Both proofs are now established: the read
     //    side (standing verified, admission ok) and the write side (no seam refused the mutation).
@@ -266,4 +294,54 @@ pub fn decide(office: &OfficeOutputs) -> TransitionDecision {
 
 fn refuse(kind: RefusalKind, seam: RefusingSeam, reason: &str) -> TransitionDecision {
     TransitionDecision::Refuse { kind, seam, reasons: vec![reason.to_string()] }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn office(admission: AdmissionOutput, consume: ConsumeOutput) -> OfficeOutputs {
+        OfficeOutputs {
+            standing: StandingOutput::Verified { receipt_ref: "rr".to_string() },
+            spendability: SpendabilityOutput::NotApplicable,
+            la_admission: admission,
+            la_consume: consume,
+            scope: "s".to_string(),
+            target: "t".to_string(),
+        }
+    }
+
+    fn refusal_kind(d: &TransitionDecision) -> Option<&'static str> {
+        match d {
+            TransitionDecision::Refuse { kind, .. } => Some(kind.as_str()),
+            _ => None,
+        }
+    }
+
+    // B5 ordering pin (codex review 2026-07-03): the LA-token quartet is checked
+    // AFTER admission, so an impossible combined state (Denied admission + a
+    // token-state consume) surfaces the EARLIER admission refusal, not the
+    // consume refusal. Guards against a future reorder that would let a
+    // token-state check pre-empt admission.
+    #[test]
+    fn admission_denied_wins_over_token_state_consume() {
+        let d = decide(&office(AdmissionOutput::Denied, ConsumeOutput::Expired));
+        assert_eq!(refusal_kind(&d), Some("admission_denied"));
+        let d = decide(&office(AdmissionOutput::Denied, ConsumeOutput::ScopeMismatch));
+        assert_eq!(refusal_kind(&d), Some("admission_denied"));
+    }
+
+    // The quartet each maps to its own kind under an admitted LA.
+    #[test]
+    fn token_state_consume_refuses_with_its_own_kind() {
+        for (consume, want) in [
+            (ConsumeOutput::Revoked, "token_revoked"),
+            (ConsumeOutput::Expired, "token_expired"),
+            (ConsumeOutput::UnknownToken, "unknown_token"),
+            (ConsumeOutput::ScopeMismatch, "scope_mismatch"),
+        ] {
+            let d = decide(&office(AdmissionOutput::Admitted, consume));
+            assert_eq!(refusal_kind(&d), Some(want));
+        }
+    }
 }

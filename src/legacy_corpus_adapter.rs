@@ -17,7 +17,7 @@ use crate::LegacyVerdict;
 
 /// The 8 canonical scenarios (`drill_runner.py:257`). The 9th corpus case reuses `all-green` with an
 /// origin override.
-pub const SUPPORTED_SCENARIOS: [&str; 8] = [
+pub const SUPPORTED_SCENARIOS: [&str; 12] = [
     "no-standing",
     "standing-expired",
     "wicket-denied",
@@ -26,6 +26,12 @@ pub const SUPPORTED_SCENARIOS: [&str; 8] = [
     "all-green",
     "temporal-lapse",
     "temporal-lapse-twin",
+    // B5 LA-token quartet (2026-07-03): verified standing + admitted LA, but the
+    // consume returns each token-state ConsumptionDecision.
+    "scope-mismatch",
+    "token-revoked",
+    "token-expired",
+    "unknown-token",
 ];
 
 /// The all-green standing digest fixture (`drill_runner.py` `ALL_GREEN_STANDING_DIGEST`).
@@ -118,6 +124,28 @@ fn expand(scenario: &str) -> (OfficeOutputs, Mechanics) {
             verified(), SpendabilityOutput::Bounded, AdmissionOutput::Admitted,
             ConsumeOutput::Consumed,
             Mechanics { effect_count: 1, consumed: true, gap_accounted: false },
+        ),
+        // B5 quartet: standing verified, LA admits, consume refuses on the token
+        // state — no effect spent (effect 0, not consumed).
+        "scope-mismatch" => (
+            verified(), SpendabilityOutput::NotApplicable, AdmissionOutput::Admitted,
+            ConsumeOutput::ScopeMismatch,
+            Mechanics { effect_count: 0, consumed: false, gap_accounted: false },
+        ),
+        "token-revoked" => (
+            verified(), SpendabilityOutput::NotApplicable, AdmissionOutput::Admitted,
+            ConsumeOutput::Revoked,
+            Mechanics { effect_count: 0, consumed: false, gap_accounted: false },
+        ),
+        "token-expired" => (
+            verified(), SpendabilityOutput::NotApplicable, AdmissionOutput::Admitted,
+            ConsumeOutput::Expired,
+            Mechanics { effect_count: 0, consumed: false, gap_accounted: false },
+        ),
+        "unknown-token" => (
+            verified(), SpendabilityOutput::NotApplicable, AdmissionOutput::Admitted,
+            ConsumeOutput::UnknownToken,
+            Mechanics { effect_count: 0, consumed: false, gap_accounted: false },
         ),
         _ => unreachable!("caller validates scenario before expand"),
     };
