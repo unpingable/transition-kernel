@@ -1,5 +1,19 @@
 # transition-kernel
 
+> **Status (2026-07-26): executable admissibility research specimen.** This
+> repository is a sealed research office in the *classic* (agent_gov)
+> governance lineage. It is **not** a prior version of Docket and is not
+> deprecated: Docket's governed work runtime was built greenfield, compared
+> against this repo afterward under an isolation-gated task, and the recorded
+> verdict was "complementary organs, not rival implementations of one organ —
+> nothing imported" (`docket` repo, `docs/governed-runtime/old-rust-comparison.md`).
+> The live governance constellation's canonical offices are AG ng (authority),
+> Docket (execution), NQ (testimony/claims/reliance), and Nightshift
+> (proposal/orchestration); the agent_gov constellation framing below, and the
+> live 3b consequence chain orchestrated from agent_gov, are frozen historical
+> claims sealed at `stage3b2-first-effect`. Frontier work stays
+> named-not-ratified per `NEXT.md`.
+
 The missing **governed-transition office** in the agent_gov governance constellation: given a proposed
 transition and its cited basis, decide `Admit(AdmissionCandidate) | Refuse(kind, reasons) |
 Escalate(required_authority)`. It is the **sole minter of "admitted"** and the sole home of the
@@ -14,7 +28,7 @@ ratify policy, or own the governance root (see `NON_CLAIMS.md`).
 ## 30-second specimen
 
 ```bash
-cargo test                 # conformance (9 frozen cases, byte-for-byte) + quarantined Lean specimen
+cargo test                 # conformance (13 frozen cases, byte-for-byte) + quarantined Lean specimen
 python3 scripts/differential.py   # Rust ≡ frozen contract ≡ live Python (if agent_gov importable)
 ```
 
@@ -73,8 +87,8 @@ fields.
 Each authority was turned on at a reviewed boundary, the legacy route progressively fenced and now
 structurally unreachable under `enforce`:
 
-- **A1** — decision-surface conformance: nine corpus cases byte-for-byte, verified Rust ≡ frozen ≡ live
-  Python.
+- **A1** — decision-surface conformance: the frozen corpus byte-for-byte (13 cases today; nine at the
+  original summit), verified Rust ≡ frozen ≡ live Python.
 - **A2 / A2b** — live, non-operational traversal through the real `agent_gov` supervisor (transport +
   orchestration, no consequence).
 - **GAP-3 / GAP-3b** — typed-memory custody: `remembered → relied_upon` unconstructable without explicit

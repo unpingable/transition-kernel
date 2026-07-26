@@ -52,8 +52,8 @@ pointers, never recomputed from content.
 ## Invariants
 
 1. **Wall-1 fence.** Every corpus input is a simulated origin (`drill`/`synthetic`), so `operational` is
-   `false` in all nine — even the cases that mechanically consume. Running this corpus cannot mint a
-   spendable/operational receipt.
+   `false` in every corpus case (13 today; "all nine" at the original summit) — even the cases that
+   mechanically consume. Running this corpus cannot mint a spendable/operational receipt.
 2. **Candidate ≠ authority.** The decision stage yields `TransitionDecision::Admit(AdmissionCandidate)`;
    `AuthorizedTransition` is unconstructable here (`NON_CLAIMS.md`). `operational: false` is structural.
 3. **Seam precedence.** Standing (inside wicket) → standing-spendability gate → LA request/admission →
